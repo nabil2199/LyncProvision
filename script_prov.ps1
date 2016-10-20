@@ -51,7 +51,6 @@ ForEach ($user in $users)
 	}
 
 #Generating Random non trivial PIN
-    $PIN=Get-Random -Maximum 1000000 -Minimum 100000
     do{
         $PIN=Get-random -Maximum 1000000 -Minimum 100000
     }until($PIN -ne 123456 -And $PIN -ne 234567 -And $PIN -ne 345678 -And $PIN -ne 456789 -And $PIN -ne 111111 -And $PIN -ne 222222 -And $PIN -ne 333333 -And $PIN -ne 444444 -And $PIN -ne 555555 -And $PIN -ne 666666 -And $PIN -ne 777777 -And $PIN -ne 888888 -And $PIN -ne 999999 -And $PIN -ne 000000)
