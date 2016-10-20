@@ -22,7 +22,7 @@ $mycreds = New-Object System.Management.Automation.PSCredential ("Groupe\Weconne
 
 #User CSV loading
 $users = $null
-$users = Import-CSV C:\Users\NXLX8474\Desktop\users.csv
+$users = Import-CSV C:\Sources\users.csv
 $count = $users.count
 
 write-host "User count within CSV file=" $count
