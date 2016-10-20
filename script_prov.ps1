@@ -1,5 +1,6 @@
 <#
 User activation and setup
+Verion 0.4
 OCWS
 CSV file path C:\Users\deploylnc\Desktop\users.csv
 #>
@@ -49,8 +50,10 @@ ForEach ($user in $users)
 
 	}
 
+#Generating Random PIN
+    $PIN=Get-Random -Maximum 1000000 -Minimum 100000
 #Setting PIN
-	Set-CsPinSendCAWelcomeMail -UserUri $user.upn -From "weconnect@generali.fr" -Subject "Votre nouveau PIN Lync" -UserEmailAddress $users.EmailAddress -Pin "728943" -Force -SmtpServer rapport.groupe.generali.fr -Credential $mycreds
+	Set-CsPinSendCAWelcomeMail -UserUri $user.upn -From "weconnect@generali.fr" -Subject "Votre nouveau PIN Lync" -UserEmailAddress $users.EmailAddress -Pin $PIN -Force -SmtpServer rapport.groupe.generali.fr -Credential $mycreds
 	if ($?=$true){
 		write-host -NoNewline "Dial-in conferencing PIN set for user: "; Write-Host -ForegroundColor Cyan $user.upn
 	}    
