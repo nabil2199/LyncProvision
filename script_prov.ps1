@@ -57,19 +57,19 @@ ForEach ($user in $users)
 
 #Setting PIN
 	Set-CsPinSendCAWelcomeMail -UserUri $user.upn -From "weconnect@generali.fr" -Subject "Votre nouveau PIN Lync" -UserEmailAddress $users.EmailAddress -Pin $PIN -Force -SmtpServer rapport.groupe.generali.fr -Credential $mycreds
-	if ($?=$true){
+	if ($? -eq $true){
 		write-host -NoNewline "Dial-in conferencing PIN set for user: "; Write-Host -ForegroundColor Cyan $user.upn
 	}    
 #Granting voice policy
     Grant-CsVoicePolicy -Identity $user.upn -PolicyName $user.VoicePolicy
-	if ($?=$true){
+	if ($? -eq $true){
 		write-host -NoNewLine "Voice policy "; Write-Host -NoNewline -ForegroundColor Green $user.VoicePolicy; Write-Host -NoNewline " granted to useruser: "; Write-Host -ForegroundColor Cyan $user.upn
 	}
 #Granting Conferencing policy
 <#
     if ($user.dialin -eq 'Y'){
         Grant-CsConferencingPolicy -Identity $user.upn -PolicyName $DialinPolicy
-	    if ($?=$true){
+	    if ($? -eq $true){
 		    write-host -NoNewLine "Conferencing policy $DialinPolicy granted to user "; Write-Host -NoNewline -ForegroundColor Cyan $user.upn ; Write-Host " Enabling dial-in conferencing"
 	    }
     }
