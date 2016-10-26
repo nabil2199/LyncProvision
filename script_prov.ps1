@@ -21,14 +21,14 @@ $secpasswd = ConvertTo-SecureString "Weconne2016" -AsPlainText -Force
 $mycreds = New-Object System.Management.Automation.PSCredential ("Groupe\Weconnect", $secpasswd)
 
 #User CSV loading
-$users = $null
-$users = Import-CSV C:\Sources\users.csv
-$count = $users.count
+$usersList = $null
+$usersList = Import-CSV C:\Sources\users.csv
+$count = $usersList.count
 
 write-host "User count within CSV file=" $count
 write-host ""
 
-ForEach ($user in $users) 
+ForEach ($user in $usersList) 
 {
 	
     if ($user.Tactical -eq 'Y'){
@@ -56,7 +56,7 @@ ForEach ($user in $users)
     }until($PIN -ne 123456 -And $PIN -ne 012345 -And $PIN -ne 234567 -And $PIN -ne 345678 -And $PIN -ne 456789 -And $PIN -ne 111111 -And $PIN -ne 222222 -And $PIN -ne 333333 -And $PIN -ne 444444 -And $PIN -ne 555555 -And $PIN -ne 666666 -And $PIN -ne 777777 -And $PIN -ne 888888 -And $PIN -ne 999999 -And $PIN -ne 000000 -And $PIN -ne 987654 -And $PIN -ne 876543 -And $PIN -ne 765432 -And $PIN -ne 654321 -And $PIN -ne 543210)
 
 #Setting PIN
-	Set-CsPinSendCAWelcomeMail -UserUri $user.upn -From "weconnect@generali.fr" -Subject "Votre nouveau PIN Lync" -UserEmailAddress $users.EmailAddress -Pin $PIN -Force -SmtpServer rapport.groupe.generali.fr -Credential $mycreds
+	Set-CsPinSendCAWelcomeMail -UserUri $user.upn -From "weconnect@generali.fr" -Subject "Votre nouveau PIN Lync" -UserEmailAddress $user.EmailAddress -Pin $PIN -Force -SmtpServer rapport.groupe.generali.fr -Credential $mycreds
 	if ($? -eq $true){
 		write-host -NoNewline "Dial-in conferencing PIN set for user: "; Write-Host -ForegroundColor Cyan $user.upn
 	}    
