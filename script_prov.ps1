@@ -18,55 +18,55 @@ param (
 
 #Email account credentials:
 $secpasswd = ConvertTo-SecureString "Weconne2016" -AsPlainText -Force
-$mycreds = New-Object System.Management.Automation.PSCredential ("Groupe\Weconnect", $secpasswd)
+$mycreds = New-Object System.Management.Automation.PSCredential ("Groupe\Weconnect",$secpasswd)
 
 #User CSV loading
 $usersList = $null
-$usersList = Import-CSV C:\Sources\users.csv
+$usersList = Import-Csv C:\Sources\users.csv
 $count = $usersList.count
 
-write-host "User count within CSV file=" $count
-write-host ""
+Write-Host "User count within CSV file=" $count
+Write-Host ""
 
-ForEach ($user in $usersList) 
+foreach ($user in $usersList)
 {
-	
-    if ($user.Tactical -eq 'Y'){
-        write-host 'User ' -nonewline; Write-Host $user.upn -nonewline -ForegroundColor Cyan; Write-Host ' is Tactical, skipping'
 
-	}
-    elseif ($user.Tactical -eq 'N'){
-        write-host 'User ' -nonewline; Write-Host $user.upn -nonewline -ForegroundColor Cyan; Write-Host ' is NOT Tactical, enabling user for enterprise voice and setting properties'
+  if ($user.Tactical -eq 'Y') {
+    Write-Host 'User ' -NoNewline; Write-Host $user.upn -NoNewline -ForegroundColor Cyan; Write-Host ' is Tactical, skipping'
 
-#Computing LineUri from CSV file
-        if ($user.Extension -match '^\d+$'){
-            $LineUri_complete = "tel:" + $user.TelURI + ";ext=" + $user.Extension
-        }
-        else {
-            $LineUri_complete = "tel:" + $user.TelURI
-        }
-        write-host "Set-CsUser -Identity " -nonewline; Write-Host $user.upn -nonewline -ForegroundColor Cyan; Write-Host -NoNewline " -EnterpriseVoiceEnabled $true -LineUri "; Write-Host -ForegroundColor Green $LineUri_complete
-		Set-CsUser -Identity $user.upn -EnterpriseVoiceEnabled $true -LineUri $LineUri_complete
+  }
+  elseif ($user.Tactical -eq 'N') {
+    Write-Host 'User ' -NoNewline; Write-Host $user.upn -NoNewline -ForegroundColor Cyan; Write-Host ' is NOT Tactical, enabling user for enterprise voice and setting properties'
 
-	}
+    #Computing LineUri from CSV file
+    if ($user.Extension -match '^\d+$') {
+      $LineUri_complete = "tel:" + $user.TelURI + ";ext=" + $user.Extension
+    }
+    else {
+      $LineUri_complete = "tel:" + $user.TelURI
+    }
+    Write-Host "Set-CsUser -Identity " -NoNewline; Write-Host $user.upn -NoNewline -ForegroundColor Cyan; Write-Host -NoNewline " -EnterpriseVoiceEnabled $true -LineUri "; Write-Host -ForegroundColor Green $LineUri_complete
+    Set-CsUser -identity $user.upn -EnterpriseVoiceEnabled $true -LineUri $LineUri_complete
 
-#Generating Random non trivial PIN
-    do{
-        $PIN=Get-random -Maximum 1000000 -Minimum 100000
-    }until($PIN -ne 123456 -And $PIN -ne 012345 -And $PIN -ne 234567 -And $PIN -ne 345678 -And $PIN -ne 456789 -And $PIN -ne 111111 -And $PIN -ne 222222 -And $PIN -ne 333333 -And $PIN -ne 444444 -And $PIN -ne 555555 -And $PIN -ne 666666 -And $PIN -ne 777777 -And $PIN -ne 888888 -And $PIN -ne 999999 -And $PIN -ne 000000 -And $PIN -ne 987654 -And $PIN -ne 876543 -And $PIN -ne 765432 -And $PIN -ne 654321 -And $PIN -ne 543210)
+  }
 
-#Setting PIN
-	Set-CsPinSendCAWelcomeMail -UserUri $user.upn -From "weconnect@generali.fr" -Subject "Votre nouveau PIN Lync" -UserEmailAddress $user.EmailAddress -Pin $PIN -Force -SmtpServer rapport.groupe.generali.fr -Credential $mycreds
-	if ($? -eq $true){
-		write-host -NoNewline "Dial-in conferencing PIN set for user: "; Write-Host -ForegroundColor Cyan $user.upn
-	}    
-#Granting voice policy
-    Grant-CsVoicePolicy -Identity $user.upn -PolicyName $user.VoicePolicy
-	if ($? -eq $true){
-		write-host -NoNewLine "Voice policy "; Write-Host -NoNewline -ForegroundColor Green $user.VoicePolicy; Write-Host -NoNewline " granted to useruser: "; Write-Host -ForegroundColor Cyan $user.upn
-	}
-#Granting Conferencing policy
-<#
+  #Generating Random non trivial PIN
+  do {
+    $PIN = Get-Random -Maximum 1000000 -Minimum 100000
+  } until ($PIN -ne 123456 -and $PIN -ne 012345 -and $PIN -ne 234567 -and $PIN -ne 345678 -and $PIN -ne 456789 -and $PIN -ne 111111 -and $PIN -ne 222222 -and $PIN -ne 333333 -and $PIN -ne 444444 -and $PIN -ne 555555 -and $PIN -ne 666666 -and $PIN -ne 777777 -and $PIN -ne 888888 -and $PIN -ne 999999 -and $PIN -ne 000000 -and $PIN -ne 987654 -and $PIN -ne 876543 -and $PIN -ne 765432 -and $PIN -ne 654321 -and $PIN -ne 543210)
+
+  #Setting PIN
+  Set-CsPinSendCAWelcomeMail -UserUri $user.upn -From "weconnect@generali.fr" -Subject "Votre nouveau PIN Lync" -UserEmailAddress $user.EmailAddress -Pin $PIN -Force -SmtpServer rapport.groupe.generali.fr -Credential $mycreds
+  if ($? -eq $true) {
+    Write-Host -NoNewline "Dial-in conferencing PIN set for user: "; Write-Host -ForegroundColor Cyan $user.upn
+  }
+  #Granting voice policy
+  Grant-CsVoicePolicy -identity $user.upn -PolicyName $user.VoicePolicy
+  if ($? -eq $true) {
+    Write-Host -NoNewline "Voice policy "; Write-Host -NoNewline -ForegroundColor Green $user.VoicePolicy; Write-Host -NoNewline " granted to useruser: "; Write-Host -ForegroundColor Cyan $user.upn
+  }
+  #Granting Conferencing policy
+  <#
     if ($user.dialin -eq 'Y'){
         Grant-CsConferencingPolicy -Identity $user.upn -PolicyName $DialinPolicy
 	    if ($? -eq $true){
@@ -75,7 +75,7 @@ ForEach ($user in $usersList)
     }
 #>
 
-	write-host "****************************User " -nonewline; Write-Host -foregroundcolor Cyan $user.upn -nonewline; Write-Host  " set****************************"
-	write-host ""
-		
+  Write-Host "****************************User " -NoNewline; Write-Host -ForegroundColor Cyan $user.upn -NoNewline; Write-Host " set****************************"
+  Write-Host ""
+
 }
