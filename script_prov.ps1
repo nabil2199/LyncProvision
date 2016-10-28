@@ -16,17 +16,25 @@ param (
 #Dialin policy
 #$DialinPolicy = "Generali_Conferencing"
 
-#Email account credentials:
-$secpasswd = ConvertTo-SecureString "Weconne2016" -AsPlainText -Force
-$mycreds = New-Object System.Management.Automation.PSCredential ("Groupe\Weconnect",$secpasswd)
+param(
 
-#PIN file set
-$PINfilePath = "C:\Sources\ProvisioningPIN.csv"
+  [String]$userCsv="C:\Sources\users.csv"
+  [String]$PINfilePath="C:\Sources\ProvisioningPIN.csv"
+  [String]$mailUser="Groupe\Weconnect"
+  [String]$mailPassword="Weconne2016"
+
+)
+
+#Email account credentials:
+$secpasswd = ConvertTo-SecureString $mailPassword -AsPlainText -Force
+$mycreds = New-Object System.Management.Automation.PSCredential ($mailUser,$secpasswd)
+
+#PIN file initialise
 add-content "upn,EmailAddress,Extension,PIN" -path $PINfilePath
 
 #User CSV loading
 $usersList = $null
-$usersList = Import-Csv C:\Sources\users.csv
+$usersList = Import-Csv $userCsv
 $count = $usersList.count
 Write-Host "User count within CSV file=" $count
 Write-Host ""
