@@ -4,17 +4,6 @@ Verion 0.4
 OCWS
 CSV file path C:\Users\deploylnc\Desktop\users.csv
 #>
-<#
-param (
-	[Parameter(Position=0,
-				HelpMessage="Path to input CSV file")]
-	[alias("CSVPath")]
-	[String]$InputCSVPath="C:\Users\NXLX8474\Desktop\users.csv"
-)
-#>
-
-#Dialin policy
-#$DialinPolicy = "Generali_Conferencing"
 
 param([string]$userCsv = "C:\Sources\users.csv",[string]$PINfilePath = "C:\Sources\ProvisioningPIN.csv",[string]$mailUser = "Groupe\Weconnect",[string]$mailPassword = "Weconne2016")
 
