@@ -16,17 +16,18 @@ param (
 #Dialin policy
 #$DialinPolicy = "Generali_Conferencing"
 
-#Email account credentials:
-$secpasswd = ConvertTo-SecureString "Weconne2016" -AsPlainText -Force
-$mycreds = New-Object System.Management.Automation.PSCredential ("Groupe\Weconnect",$secpasswd)
+param([string]$userCsv = "C:\Sources\users.csv",[string]$PINfilePath = "C:\Sources\ProvisioningPIN.csv",[string]$mailUser = "Groupe\Weconnect",[string]$mailPassword = "Weconne2016")
 
-#PIN file set
-$PINfilePath = "C:\Sources\ProvisioningPIN.csv"
-add-content "upn,EmailAddress,Extension,PIN" -path $PINfilePath
+#Email account credentials:
+$secpasswd = ConvertTo-SecureString $mailPassword -AsPlainText -Force
+$mycreds = New-Object System.Management.Automation.PSCredential ($mailUser,$secpasswd)
+
+#PIN file initialise
+Add-Content "upn,EmailAddress,Extension,PIN" -Path $PINfilePath
 
 #User CSV loading
 $usersList = $null
-$usersList = Import-Csv C:\Sources\users.csv
+$usersList = Import-Csv $userCsv
 $count = $usersList.count
 Write-Host "User count within CSV file=" $count
 Write-Host ""
@@ -61,12 +62,12 @@ foreach ($user in $usersList)
   #Setting PIN
   Set-CsPinSendCAWelcomeMail -UserUri $user.upn -From "weconnect@generali.fr" -Subject "Votre nouveau PIN Lync" -UserEmailAddress $user.EmailAddress -Pin $PIN -Force -SmtpServer rapport.groupe.generali.fr -Credential $mycreds
   if ($? -eq $true) {
-    Write-Host -NoNewline "Dial-in conferencing PIN set for user: "; Write-Host -ForegroundColor Cyan $user.upn  
+    Write-Host -NoNewline "Dial-in conferencing PIN set for user: "; Write-Host -ForegroundColor Cyan $user.upn
   }
 
   #Writing PIN to CSV
   $line = $user.upn + "," + $user.EmailAddress + "," + $user.Extension + "," + $PIN
-  add-content $line -path $PINfilePath
+  Add-Content $line -Path $PINfilePath
 
   #Granting voice policy
   Grant-CsVoicePolicy -identity $user.upn -PolicyName $user.VoicePolicy
