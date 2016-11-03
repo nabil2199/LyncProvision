@@ -1,6 +1,6 @@
 <#
 User activation and setup
-Verion 0.4
+Verion 0.6
 OCWS
 CSV file path C:\Users\deploylnc\Desktop\users.csv
 #>
