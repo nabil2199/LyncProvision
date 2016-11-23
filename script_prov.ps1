@@ -12,7 +12,7 @@ $secpasswd = ConvertTo-SecureString $mailPassword -AsPlainText -Force
 $mycreds = New-Object System.Management.Automation.PSCredential ($mailUser,$secpasswd)
 
 #PIN file initialise
-Add-Content "upn,EmailAddress,Extension,PIN" -Path $PINfilePath
+Add-Content "upn,FirstName,LastName,EmailAddress,Desk,Extension,PIN" -Path $PINfilePath
 
 #User CSV loading
 $usersList = $null
@@ -55,7 +55,8 @@ foreach ($user in $usersList)
   }
 
   #Writing PIN to CSV
-  $line = $user.upn + "," + $user.EmailAddress + "," + $user.Extension + "," + $PIN
+
+  $line = $user.upn + "," + $user.FirstName + "," + $user.LastName + "," + $user.EmailAddress + "," + $user.Desk + "," + $user.Extension + "," + $PIN
   Add-Content $line -Path $PINfilePath
 
   #Granting voice policy
