@@ -24,11 +24,11 @@ Write-Host ""
 foreach ($user in $usersList)
 {
 
-  if ($user.Tactical -eq 'Y') {
+  if ($user.Tactical -eq 'True') {
     Write-Host 'User ' -NoNewline; Write-Host $user.upn -NoNewline -ForegroundColor Cyan; Write-Host ' is Tactical, skipping'
 
   }
-  elseif ($user.Tactical -eq 'N') {
+  elseif ($user.Tactical -eq 'False') {
     Write-Host 'User ' -NoNewline; Write-Host $user.upn -NoNewline -ForegroundColor Cyan; Write-Host ' is NOT Tactical, enabling user for enterprise voice and setting properties'
 
     #Computing LineUri from CSV file
@@ -49,7 +49,7 @@ foreach ($user in $usersList)
   } until ($PIN -ne 123456 -and $PIN -ne 012345 -and $PIN -ne 234567 -and $PIN -ne 345678 -and $PIN -ne 456789 -and $PIN -ne 111111 -and $PIN -ne 222222 -and $PIN -ne 333333 -and $PIN -ne 444444 -and $PIN -ne 555555 -and $PIN -ne 666666 -and $PIN -ne 777777 -and $PIN -ne 888888 -and $PIN -ne 999999 -and $PIN -ne 000000 -and $PIN -ne 987654 -and $PIN -ne 876543 -and $PIN -ne 765432 -and $PIN -ne 654321 -and $PIN -ne 543210)
 
   #Setting PIN
-  Set-CsPinSendCAWelcomeMail -UserUri $user.upn -From "weconnect@generali.fr" -Subject "Votre nouveau PIN Lync" -UserEmailAddress $user.EmailAddress -Pin $PIN -Extension $user.Extension -Force -SmtpServer rapport.groupe.generali.fr -Credential $mycreds
+  Set-CsPinSendCAWelcomeMail -UserUri $user.upn -From "weconnect@generali.fr" -Subject "Votre code pin pour le nouveau téléphone" -UserEmailAddress $user.EmailAddress -Pin $PIN -Extension $user.Extension -Force -SmtpServer rapport.groupe.generali.fr -Credential $mycreds
   if ($? -eq $true) {
     Write-Host -NoNewline "Dial-in conferencing PIN set for user: "; Write-Host -ForegroundColor Cyan $user.upn
   }
@@ -64,15 +64,6 @@ foreach ($user in $usersList)
   if ($? -eq $true) {
     Write-Host -NoNewline "Voice policy "; Write-Host -NoNewline -ForegroundColor Green $user.VoicePolicy; Write-Host -NoNewline " granted to useruser: "; Write-Host -ForegroundColor Cyan $user.upn
   }
-  #Granting Conferencing policy
-  <#
-    if ($user.dialin -eq 'Y'){
-        Grant-CsConferencingPolicy -Identity $user.upn -PolicyName $DialinPolicy
-	    if ($? -eq $true){
-		    write-host -NoNewLine "Conferencing policy $DialinPolicy granted to user "; Write-Host -NoNewline -ForegroundColor Cyan $user.upn ; Write-Host " Enabling dial-in conferencing"
-	    }
-    }
-#>
 
   Write-Host "****************************User " -NoNewline; Write-Host -ForegroundColor Cyan $user.upn -NoNewline; Write-Host " set****************************"
   Write-Host ""
